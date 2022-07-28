@@ -26,14 +26,15 @@ struct game_mutex_t {
   
   pthread_mutex_t lock_speed_car1;
   pthread_mutexattr_t mutex_attr_speed_car1;  
+
+  pthread_mutex_t lock_v_shift_unit;
+  pthread_mutexattr_t mutex_attr_v_shift_unit;    
 } mtx;
 
-double speed_car1 = 0.0;
-bool game_break = false;
-road_t *ptr_road;
 /* ----------------------------------------- */
 
 #define PDEBUG_(X) cout << #X << " " << X << endl;
+
 /* ----------------------------------------- */
 
 void init_mutex(){
@@ -50,6 +51,18 @@ void init_mutex(){
     cerr << "mutex init" << endl;
     exit(1);
   }
+
+  ret = pthread_mutex_init(&mtx.lock_v_shift_unit, &mtx.mutex_attr_v_shift_unit);
+  if(ret){
+    cerr << "mutex init" << endl;
+    exit(1);
+  }
+}
+
+void destroy_mutex(){
+  pthread_mutex_destroy(&mtx.lock_speed_car1);
+  pthread_mutex_destroy(&mtx.lock_get_time);
+  pthread_mutex_destroy(&mtx.lock_v_shift_unit);
 }
 
 void get_time(timespec *ptr_now, long ns){
@@ -81,7 +94,7 @@ void paste_img(const Mat& src, const Rect& coord, Mat& dst){
  * @brief paste img to borad in vertical wrap mode
  * 
  */
-void paste_img_vert_shift(const Mat& src, const Rect& coord, int vert_shift, Mat& dst){
+void paste_img_vert_wrap(const Mat& src, const Rect& coord, int vert_shift, Mat& dst){
   
   //PDEBUG_(vert_shift);
   while(vert_shift >= 500) {
@@ -200,23 +213,25 @@ struct board_def_t {
   time_t time_period_s;
   long time_speed_up_ns;
   time_t time_speed_up_s;
+  double begining_speed_car1;
   double step_speed_up;
   double max_speed;
 
   Rect calc_begin_rect_lane(Mat &img, int lane);
   Rect calc_begin_rect_roadside(Mat &img, int place);
 } b_df = {
-  200,
-  75,
-  500,
-  "cars - higher speed",
-  33000000,  //ms
-  0,
-  1000000000,
-  0,
-  1.5,
-  100.0
-};
+    200,
+    75,
+    500,
+    "cars - higher speed",
+    33000000,  //ms
+    0,
+    1000000000,
+    0,
+    0.1,
+    0.4,
+    35.0
+  };
 
 Rect board_def_t::calc_begin_rect_lane(Mat &img, int lane){
   return Rect(
@@ -249,6 +264,35 @@ Rect board_def_t::calc_begin_rect_roadside(Mat &img, int place){
 }
 
 /* ----------------------------------------- */
+
+class speed_car1_t {
+  private:
+  double speed_car1;
+  public:
+  speed_car1_t(){
+    pthread_mutex_lock(&mtx.lock_speed_car1);
+    speed_car1 = b_df.begining_speed_car1;
+    pthread_mutex_unlock(&mtx.lock_speed_car1);
+  }
+  inline double get(){
+    double spped_car1_;
+    pthread_mutex_lock(&mtx.lock_speed_car1);
+    spped_car1_ = speed_car1;
+    pthread_mutex_unlock(&mtx.lock_speed_car1);
+    return spped_car1_;
+  }
+  inline void set(double&& speed_car1_){
+    pthread_mutex_lock(&mtx.lock_speed_car1);
+    speed_car1 = speed_car1_;
+    pthread_mutex_unlock(&mtx.lock_speed_car1);
+  }
+} speed_car1;
+
+bool game_break = false;
+road_t *ptr_road;
+
+/* ----------------------------------------- */
+
 
 /**
  * @brief game board
@@ -339,7 +383,36 @@ class road_t {
 
   public:
 
-  int v_shift_unit;  //<< unit shift calculated based on car1 speed, and prev coord_shift
+  class v_shift_unit_t {
+    int v_shift_unit;  //<< unit shift calculated based on car1 speed, and prev coord_shift
+    public:
+    v_shift_unit_t(){       
+      pthread_mutex_lock(&mtx.lock_speed_car1);
+      pthread_mutex_lock(&mtx.lock_v_shift_unit);
+      v_shift_unit = 0;
+      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
+      pthread_mutex_unlock(&mtx.lock_speed_car1);
+    };
+    inline int get(){ 
+      int v_shift_unit_;
+      //cout << "v_shift_u.get() " << endl;
+      pthread_mutex_lock(&mtx.lock_speed_car1);
+      pthread_mutex_lock(&mtx.lock_v_shift_unit);
+      v_shift_unit_ =  v_shift_unit;
+      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
+      pthread_mutex_unlock(&mtx.lock_speed_car1);
+      return v_shift_unit_;
+    }
+    inline void set(int v_shift_unit_){
+      //cout << "v_shift_u.set() " << endl;
+      pthread_mutex_lock(&mtx.lock_speed_car1);
+      pthread_mutex_lock(&mtx.lock_v_shift_unit);
+      v_shift_unit = v_shift_unit_;
+      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
+      pthread_mutex_unlock(&mtx.lock_speed_car1);
+    }
+    
+  } v_shift_unit;
   int v_shift_total; //total shift
   
   road_t();
@@ -434,24 +507,30 @@ road_t::road_t()
 }
 
 void road_t::calculate_shift(){ 
-  pthread_mutex_lock(&mtx.lock_speed_car1);
-  v_shift_unit = static_cast<int>(       //50px == 2cm = 0,02m ->   0.01m == 25px == 1m real
-    (speed_car1 ) *                      //10 == 4km/h == 1.1m/s
-    (b_df.time_period_ns ) / 26500000)   //33000000ns == 0,033s    
-  ;                                       //--------------------------
-                                          //0.033s -> 0.3m/s -> 25px/3 = 8.33 px
-  pthread_mutex_unlock(&mtx.lock_speed_car1);                                          
-  PDEBUG_(v_shift_unit);
+  cout << "calc_shift() " << endl;
+  double curr_speed = speed_car1.get();
+  v_shift_unit.set( static_cast<int>(       //50px == 2cm = 0,02m ->   0.01m == 25px == 1m real
+    (curr_speed ) *                      //10 == 4km/h == 1.1m/s
+    (b_df.time_period_ns ) / 26500000)   //33000000ns == 0,033s      
+  );                                       //--------------------------
+                                          //0.033s -> 0.3m/s -> 25px/3 = 8.33 px  
+  //PDEBUG_(v_shift_unit.get());
 }
 
-void road_t:: draw(){      
+void road_t:: draw(){    
+  int v_shift_unit_get = v_shift_unit.get();
+  pthread_mutex_lock(&mtx.lock_speed_car1);
   board.b = empty_road.clone();  
-  v_shift_total += v_shift_unit;
-  v_shift_total = b_df.road_hight - v_shift_total;
   
-  paste_img_vert_shift(*(line1.ptr_img), line1.coord, v_shift_total,  board.b);
-  paste_img_vert_shift(*(line2.ptr_img), line2.coord, v_shift_total,  board.b);
-
+  v_shift_total += v_shift_unit_get;
+  if(v_shift_total >  b_df.road_hight){
+    v_shift_total = v_shift_total - b_df.road_hight;
+  }
+  
+  paste_img_vert_wrap(*(line1.ptr_img), line1.coord, v_shift_total,  board.b);
+  paste_img_vert_wrap(*(line2.ptr_img), line2.coord, v_shift_total,  board.b);
+  
+  pthread_mutex_unlock(&mtx.lock_speed_car1);
   // PDEBUG_( game_images.img_car1.size() );
   // PDEBUG_( car1_L );
   // PDEBUG_( board.b.size() );      
@@ -590,17 +669,13 @@ void game_control(bool *ptr_game_break){
   key_nr_t key;  
   
   road_t& road = *ptr_road;
-  car1_t my_car(road, LANE_M, 0.0);    
-
-  pthread_mutex_lock(&mtx.lock_speed_car1);
-  speed_car1 = 0.0;
-  pthread_mutex_unlock(&mtx.lock_speed_car1);
+  car1_t my_car(road, LANE_M, 0.0);     
 
   print_message(1);  
   my_car.action();
   /* EXAMPLE */
-  car2_t car2(LANE_R, 0.0);
-  hole_t hole2(LANE_L);
+  // car2_t car2(LANE_R, 0.0);
+  // hole_t hole2(LANE_L);
   /* EXAMPLE */
   
   while(key != KEY_ESC && key != KEY_ESC_CAPSLOCK){
@@ -629,8 +704,8 @@ void game_control(bool *ptr_game_break){
     my_car.action();
 
     /* EXAMPLE */
-    car2.action();
-    hole2.action();
+    // car2.action();
+    // hole2.action();
     /* EXAMPLE */
 
     board.show();
@@ -650,8 +725,8 @@ void game_control(bool *ptr_game_break){
  */
 void speed_up(bool *ptr_game_break){
   timespec now;  
-  int speed_changed = 0;
-  
+  double speed_car1_get;
+    
   while(!*ptr_game_break) {
     
     get_time(&now, b_df.time_speed_up_ns);
@@ -660,27 +735,19 @@ void speed_up(bool *ptr_game_break){
       sleep_status = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &now, NULL);
       PDEBUG_(sleep_status);
     }while(sleep_status != 0);
-
-    pthread_mutex_lock(&mtx.lock_speed_car1);
-    if(speed_car1 < b_df.max_speed){
-      speed_car1 += b_df.step_speed_up;        
-      speed_changed++;
+    speed_car1_get = speed_car1.get();
+    if(speed_car1_get < b_df.max_speed +  b_df.step_speed_up){
+      speed_car1.set( (speed_car1_get + b_df.step_speed_up) );
+      ptr_road->calculate_shift();
     }
       
-    PDEBUG_(speed_car1);
-    pthread_mutex_unlock(&mtx.lock_speed_car1);
-
-    if(speed_changed){
-      ptr_road->calculate_shift();
-      speed_changed--;
-    }
+    PDEBUG_(speed_car1.get());        
     //waitKey(0);
   }
 }
 
 
-int main(){
-  
+int main(){  
   init_mutex();
 
   //cout << _POSIX_C_SOURCE << endl;
@@ -693,6 +760,7 @@ int main(){
   th_game_control.join();
   th_speed_up.join();
 
+  destroy_mutex();
   return EXIT_SUCCESS;
 }
 
