@@ -8,17 +8,32 @@ ver: 0.1.0
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-
 #include <iostream>
+
 #include <time.h>  //clock_nanosleep()
-#include <thread>
 #include <unistd.h>
+
+#include <thread>
+// #include <chrono>  
+// #include <mutex>
 
 using namespace std;
 using namespace cv;
 namespace cars__higher_speed {  
 /* ----------------------------------------- */
+// chrono::milliseconds game_frame_time(33);
+// mutex::mutex mtx_speed_car1;
+// mutex::mutex mtx_v_shift_unit;
+// mutex::mutex mtx_get_timmer;
+//this_thread::sleep_for(game_frame_time);
+
+/* ----------------------------------------- */
 class road_t;
+class car1_t;
+class car2_t;
+class hole_t;
+class bush_t;
+class obstacle_t;
 /* ----------------------------------------- */
 struct game_mutex_t {
   pthread_mutex_t lock_get_time;
@@ -69,7 +84,7 @@ void get_time(timespec *ptr_now, long ns){
 pthread_mutex_lock(&mtx.lock_get_time);
     int ret = clock_gettime(CLOCK_MONOTONIC, ptr_now);
     if(ret){
-      cerr << "game_contro(), clock_gettime()" << endl;
+      cerr << "game_control(), clock_gettime()" << endl;
       exit(1);
     }
     ptr_now->tv_nsec += ns;
@@ -82,10 +97,31 @@ pthread_mutex_lock(&mtx.lock_get_time);
 
 /* ----------------------------------------- */
 
+
 void paste_img(const Mat& src, const Rect& coord, Mat& dst){
   for(int w = 0; w < src.rows && w < coord.height; ++w){
     for(int c = 0; c < src.cols && c < coord.width; ++c){
       dst.at<Vec3b>(coord.y + w, coord.x + c) = src.at<Vec3b>(w, c);
+    }
+  }
+}
+
+/**
+ * @brief pasting a part of the image that may protrude vertically
+ * beyond the dimensions of the dst
+ * 
+ * @param src 
+ * @param coord 
+ * @param dst 
+ */
+void paste_img_vert_partialy(const Mat& src, const Rect& coord, Mat& dst){
+  for(int w = 0; 
+      w < src.rows && w < coord.height;
+      ++w){
+    for(int c = 0; c < src.cols && c < coord.width; ++c){
+      if(coord.y + w < dst.rows && coord.y + w > 0){
+        dst.at<Vec3b>(coord.y + w, coord.x + c) = src.at<Vec3b>(w, c);
+      }
     }
   }
 }
@@ -97,8 +133,10 @@ void paste_img(const Mat& src, const Rect& coord, Mat& dst){
 void paste_img_vert_wrap(const Mat& src, const Rect& coord, int vert_shift, Mat& dst){
   
   //PDEBUG_(vert_shift);
-  while(vert_shift >= 500) {
-    vert_shift -= 500;
+  // while(vert_shift >= 500) {
+  //   vert_shift -= 500;
+  while(vert_shift >= coord.height) {
+    vert_shift -= coord.height;    
   }
   int w1 = 0; 
   for(int w2 = vert_shift;
@@ -118,6 +156,30 @@ void paste_img_vert_wrap(const Mat& src, const Rect& coord, int vert_shift, Mat&
     }
   }
 }
+
+
+void paste_img_horiz_wrap(const Mat& src, const Rect& coord, int horiz_shift, Mat& dst){
+  while(horiz_shift >= coord.width){
+    horiz_shift -= coord.width;
+  }
+  int c1 = 0;
+  for(int w = 0; w < src.rows && w < dst.rows; ++w){
+    c1 = 0;
+    for(int c2 = horiz_shift;
+        c1 < src.cols - horiz_shift && c2 < coord.width;
+        ++c1, ++c2)
+    {
+      dst.at<Vec3b>(coord.y + w, coord.x + c2) = src.at<Vec3b>(w, c1);
+    }    
+    for(int c2 = 0;
+        c1 < src.cols - horiz_shift && c2 < coord.width;
+        ++c1, ++c2)        
+    {
+      dst.at<Vec3b>(coord.y + w, coord.x + c2) = src.at<Vec3b>(w, c1);
+    }
+  }
+}
+
 /* ----------------------------------------- */
 
 enum lang_t {
@@ -139,7 +201,6 @@ string messages[lang_amount][messages_amount] {
 void print_message(int nr){
   cout << messages[lang][nr] << endl;
 }
-
 /* ----------------------------------------- */
 
 class game_images_t {
@@ -200,7 +261,8 @@ enum pos_t {
   LANE_M = 1,
   LANE_R = 2,
   ROADSIDE_L = 3,
-  ROADSIDE_R = 4
+  ROADSIDE_R = 4,
+  POS_NOT_EXISTING = 5
 };
 
 
@@ -265,6 +327,15 @@ Rect board_def_t::calc_begin_rect_roadside(Mat &img, int place){
 
 /* ----------------------------------------- */
 
+class game_state_t {
+  public:
+    bool hole_processed;
+    bool car2_processed;
+    bool bush_processed;
+} game_state;
+
+/* ----------------------------------------- */
+
 class speed_car1_t {
   private:
   double speed_car1;
@@ -288,8 +359,39 @@ class speed_car1_t {
   }
 } speed_car1;
 
+  class v_shift_unit_t {
+    int v_shift_unit;  //<< unit shift calculated based on car1 speed, and prev coord_shift
+    public:
+    v_shift_unit_t(){       
+      pthread_mutex_lock(&mtx.lock_speed_car1);
+      pthread_mutex_lock(&mtx.lock_v_shift_unit);
+      v_shift_unit = 0;
+      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
+      pthread_mutex_unlock(&mtx.lock_speed_car1);
+    };
+    inline int get(){ 
+      int v_shift_unit_;
+      //cout << "v_shift_u.get() " << endl;
+      pthread_mutex_lock(&mtx.lock_speed_car1);
+      pthread_mutex_lock(&mtx.lock_v_shift_unit);
+      v_shift_unit_ =  v_shift_unit;
+      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
+      pthread_mutex_unlock(&mtx.lock_speed_car1);
+      return v_shift_unit_;
+    }
+    inline void set(int v_shift_unit_){
+      //cout << "v_shift_u.set() " << endl;
+      pthread_mutex_lock(&mtx.lock_speed_car1);
+      pthread_mutex_lock(&mtx.lock_v_shift_unit);
+      v_shift_unit = v_shift_unit_;
+      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
+      pthread_mutex_unlock(&mtx.lock_speed_car1);
+    }    
+  } v_shift_unit;
+
 bool game_break = false;
-road_t *ptr_road;
+road_t *ptr_road = NULL;
+car1_t *ptr_car1 = NULL;
 
 /* ----------------------------------------- */
 
@@ -324,6 +426,7 @@ void board_t:: show(){
 
 class obstacle_t {
   public:
+  Rect coord;         //< current coordinates
   virtual void action() = 0;  
 };
 
@@ -383,36 +486,6 @@ class road_t {
 
   public:
 
-  class v_shift_unit_t {
-    int v_shift_unit;  //<< unit shift calculated based on car1 speed, and prev coord_shift
-    public:
-    v_shift_unit_t(){       
-      pthread_mutex_lock(&mtx.lock_speed_car1);
-      pthread_mutex_lock(&mtx.lock_v_shift_unit);
-      v_shift_unit = 0;
-      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
-      pthread_mutex_unlock(&mtx.lock_speed_car1);
-    };
-    inline int get(){ 
-      int v_shift_unit_;
-      //cout << "v_shift_u.get() " << endl;
-      pthread_mutex_lock(&mtx.lock_speed_car1);
-      pthread_mutex_lock(&mtx.lock_v_shift_unit);
-      v_shift_unit_ =  v_shift_unit;
-      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
-      pthread_mutex_unlock(&mtx.lock_speed_car1);
-      return v_shift_unit_;
-    }
-    inline void set(int v_shift_unit_){
-      //cout << "v_shift_u.set() " << endl;
-      pthread_mutex_lock(&mtx.lock_speed_car1);
-      pthread_mutex_lock(&mtx.lock_v_shift_unit);
-      v_shift_unit = v_shift_unit_;
-      pthread_mutex_unlock(&mtx.lock_v_shift_unit);
-      pthread_mutex_unlock(&mtx.lock_speed_car1);
-    }
-    
-  } v_shift_unit;
   int v_shift_total; //total shift
   
   road_t();
@@ -545,7 +618,7 @@ class bush_t : public obstacle_t {
   void action();
   
   Rect coord_targed;  //< target coordinates 
-  Rect coord;         //< current coordinates
+  //Rect coord;         //< current coordinates
 };
 /**
    * @brief Construct a new bush t object
@@ -569,8 +642,9 @@ class hole_t : public obstacle_t{
   public:  
   hole_t(pos_t pos_target_);  
   void action();
+  void reset(pos_t pos_target_);
 
-  Rect coord;         //< current coordinates
+  //Rect coord;         //< current coordinates
 };
 /**
  * @brief Construct a new hole t::hole t object
@@ -578,11 +652,19 @@ class hole_t : public obstacle_t{
  * @param pos_target_   enum pos_t target lane of hole (LANE_L, LANE_M, LANE_R)
  */
 hole_t::hole_t(pos_t pos_target_){
-  coord = b_df.calc_begin_rect_lane(game_images.img_bush, pos_target_);
+  reset(pos_target_);
 }
-void hole_t::action(){
-  //TODO: calcualte coord according to current road speed
-  paste_img(game_images.img_hole, coord, board.b);
+void hole_t::reset(pos_t pos_target_){
+  coord = b_df.calc_begin_rect_lane(game_images.img_hole, pos_target_);
+  coord.y -= game_images.img_hole.rows;
+  game_state.hole_processed = true;    
+}
+void hole_t::action(){  
+  coord.y += v_shift_unit.get();
+  paste_img_vert_partialy(game_images.img_hole, coord, board.b);
+  if(coord.y > b_df.road_hight){
+    game_state.hole_processed = false;    
+  }
 }
 
 /* ----------------------------------------- */
@@ -592,19 +674,29 @@ class car2_t : public obstacle_t{
   
   car2_t(pos_t begin_pos_, double speed);
   //~car2_t();
+  void reset(pos_t begin_pos_, double speed_);
   void action();
 
   double speed;
-  Rect coord;         //< current coordinates
+  //Rect coord;         //< current coordinates
     
 };
 car2_t::car2_t(pos_t begin_pos_, double speed_){
+  reset(begin_pos_, speed_);
+}  
+void car2_t::reset(pos_t begin_pos_, double speed_){
   speed = speed_;
   coord = b_df.calc_begin_rect_lane(game_images.img_car2, begin_pos_);
-}  
-void car2_t::action(){  
-  //TODO: calcualte coord according to current road speed
-  paste_img(game_images.img_car2, coord, board.b);
+  coord.y -= game_images.img_car2.rows;
+  game_state.car2_processed = true; 
+}
+void car2_t::action(){      
+  coord.y += v_shift_unit.get();
+  coord.y -= speed * ((b_df.time_period_ns ) / 26500000);  
+  paste_img_vert_partialy(game_images.img_car2, coord, board.b);
+  if(coord.y > b_df.road_hight){
+    game_state.car2_processed = false;    
+  }  
 }
  
 /* ----------------------------------------- */
@@ -658,8 +750,53 @@ enum key_nr_t {
 };
 
 /* ----------------------------------------- */
-} //namespace cars__higher_speed
 
+bool is_collisioin_hole(obstacle_t *ptr_obj){  
+  if(             
+    std::abs(ptr_obj->coord.x - ptr_car1->ptr_coord->x) < 15 &&
+    (ptr_obj->coord.y + ptr_obj->coord.height) >= ptr_car1->ptr_coord->y){
+    // PDEBUG_(ptr_obj->coord.x);
+    // PDEBUG_(ptr_car1->ptr_coord->x);
+    PDEBUG_((ptr_obj->coord.x - ptr_car1->ptr_coord->x));      
+    return true;
+  }
+  return false;
+}
+
+bool is_collisioin_car2(obstacle_t *ptr_obj){  
+  if(             
+    std::abs(ptr_obj->coord.x - ptr_car1->ptr_coord->x) < 15 &&
+    (ptr_obj->coord.y + ptr_obj->coord.height) >= ptr_car1->ptr_coord->y){
+    // PDEBUG_(ptr_obj->coord.x);
+    // PDEBUG_(ptr_car1->ptr_coord->x);
+    PDEBUG_((ptr_obj->coord.x - ptr_car1->ptr_coord->x));      
+    return true;
+  }
+  return false;
+}
+
+/* ----------------------------------------- */
+
+pos_t draw_hole_position(){
+  pos_t pos;
+  if(!game_state.hole_processed){
+    pos = static_cast<pos_t>(rand() % 5);
+  }
+  game_state.hole_processed = true;
+  return pos;
+}
+
+pos_t draw_car2_position(){
+    pos_t pos;
+    if(!game_state.car2_processed){
+      pos = static_cast<pos_t>(rand() % 3);
+    }
+    game_state.car2_processed = true;
+    return pos;
+}
+
+/* ----------------------------------------- */
+} //namespace cars__higher_speed
 using namespace cars__higher_speed;
 
 void game_control(bool *ptr_game_break){
@@ -670,12 +807,15 @@ void game_control(bool *ptr_game_break){
   
   road_t& road = *ptr_road;
   car1_t my_car(road, LANE_M, 0.0);     
-
+  ptr_car1 = &my_car;
+  
   print_message(1);  
   my_car.action();
   /* EXAMPLE */
-  // car2_t car2(LANE_R, 0.0);
-  // hole_t hole2(LANE_L);
+
+  car2_t car2(draw_car2_position(), static_cast<double>((rand()%5)+1));  
+  hole_t hole2(draw_hole_position());
+  
   /* EXAMPLE */
   
   while(key != KEY_ESC && key != KEY_ESC_CAPSLOCK){
@@ -701,16 +841,40 @@ void game_control(bool *ptr_game_break){
       if(my_car.ptr_coord == &road.car1_L)
         my_car.ptr_coord = &road.car1_M;            
     }
+    
+    /* EXAMPLE */    
+    hole2.action();
+    car2.action();
+    /* EXAMPLE */
+    
     my_car.action();
-
-    /* EXAMPLE */
-    // car2.action();
-    // hole2.action();
-    /* EXAMPLE */
 
     board.show();
 
+    if(is_collisioin_hole(&hole2)){
+      double speed_car_1_prev = speed_car1.get();      
+      speed_car1.set(
+        (speed_car_1_prev - 0.2) < 1 
+        ? 1 
+        : speed_car_1_prev - 0.2);      
+      ptr_road->calculate_shift();
+    } 
+    else {
+    if(is_collisioin_car2(&car2)){
+      double speed_car_1_prev = speed_car1.get();      
+      speed_car1.set(speed_car_1_prev * 0.9);      
+      car2.coord.y -= 10;
+      car2.speed += 0.2;
+      ptr_road->calculate_shift();
+    }
+    }
 
+    if(!game_state.hole_processed){
+      hole2.reset(draw_hole_position());
+    }
+    if(!game_state.car2_processed){
+      car2.reset(draw_car2_position(), static_cast<double>((rand()%5)+1));  
+    }
     get_time(&now, b_df.time_period_ns);
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &now, NULL);
   }
@@ -749,6 +913,7 @@ void speed_up(bool *ptr_game_break){
 
 int main(){  
   init_mutex();
+  srand(time(NULL));
 
   //cout << _POSIX_C_SOURCE << endl;
   namedWindow(b_df.wndName);
