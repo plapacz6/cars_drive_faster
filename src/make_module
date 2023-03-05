@@ -1,0 +1,60 @@
+#!/bin/bash
+
+FNAME=$1_T
+GUARD_TAG=$(echo -n $1 | awk '{ print toupper($0) }')_T
+TEST_GUARD_TAG="TEST_$GUARD_TAG"
+
+echo $GUARD_TAG
+echo $TEST_GUARD_TAG
+
+
+
+# printf "#ifndef %s\n#define %s\n\nclass $FNAME \{\npublic:\n$FNAME()\{\}\n~$FNAME()\n\n\};\n\n#endif //%s" \
+#   $GUARD_TAG \
+#   $GUARD_TAG \  
+#   $GUARD_TAG \
+#   > "$FNAME.h"
+
+echo "#ifndef $GUARD_TAG" > "$FNAME.h"
+echo "#define $GUARD_TAG" >> "$FNAME.h"
+echo "" >> "$FNAME.h"
+echo "class $FNAME" >> "$FNAME.h"
+echo '{' >> "$FNAME.h"
+echo '  public:' >> "$FNAME.h"
+echo "    $FNAME(){}" >> "$FNAME.h"
+echo "    ~$FNAME(){}" >> "$FNAME.h"
+echo '};' >> "$FNAME.h"
+echo "" >> "$FNAME.h"
+echo "#endif //$GUARD_TAG" >> "$FNAME.h"
+
+printf "#include \"%s.h\"\n" \
+  "$FNAME" \
+  > "$FNAME.cpp"
+echo "" >> "$FNAME.cpp"
+echo "$FNAME::$FNAME(){" >> "$FNAME.cpp"
+echo "}" >> "$FNAME.cpp"
+echo "" >> "$FNAME.cpp"
+echo "$FNAME::~$FNAME(){" >> "$FNAME.cpp"
+echo "}" >> "$FNAME.cpp"
+echo "" >> "$FNAME.cpp"
+
+if [ -e './test' ]; then
+  if [ -d './test' ]; then
+    echo
+  else
+    echo "file test exist, can't create directory test"
+    exit -1
+  fi
+else
+  mkdir './test'
+fi
+
+printf "#ifndef %s\n#define %s\n#include \"..\\%s.h\"\n\n#endif //%s\n" \
+  "$TEST_GUARD_TAG" \
+  "$TEST_GUARD_TAG" \
+  "$FNAME" \
+  "$TEST_GUARD_TAG" \
+  > './test/'"test_$FNAME.h"
+printf "#include \"%s\"\n" \
+  "test_$FNAME.h" \
+  > './test/'"test_$FNAME.cpp"
