@@ -7,14 +7,17 @@ EngMove_T::EngMove_T(){
 
 EngMove_T::~EngMove_T(){
 }
-
-void EngMove_T::register_start(int* st_ptr){
+size_t EngMove_T::register_to_process(int *st_ptr, int *sp_ptr){
   start_ptr.push_back(st_ptr);
+  speed_ptr.push_back(sp_ptr);
 }
 
-void EngMove_T::register_speed(int *sp_ptr){
-  speed_ptr.push_back(sp_ptr)
+void EngMove_T::clear(){
+  start_ptr.clear();
+  speed_ptr.clear();
 }
+
+// void unregister(size_t nr);
 
 void EngMove_T::move(){
   std::vector<int*>::iterator it_st, it_sp;  
@@ -25,7 +28,7 @@ void EngMove_T::move(){
     ++it_st,
     ++it_sp
   ){
-    *it_st = (*it_st) + (*it_sp);
+    **it_st = *(*it_st) + *(*it_sp);
   }
 }
 

@@ -6,8 +6,8 @@
 extern EngMove_T glob_em_y;
 
 class game_Vmovable_obj_T : public game_obj_T
-{  
-    EngMove_T em_y;
+{      
+    EngMove_T& em_y;
   public:
     int vspeed;
 

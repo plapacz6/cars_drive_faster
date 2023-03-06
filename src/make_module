@@ -49,12 +49,13 @@ else
   mkdir './test'
 fi
 
-printf "#ifndef %s\n#define %s\n#include \"..\\%s.h\"\n\n#endif //%s\n" \
+printf "#ifndef %s\n#define %s\n#include \"../%s.h\"\n\n#endif //%s\n" \
   "$TEST_GUARD_TAG" \
   "$TEST_GUARD_TAG" \
   "$FNAME" \
   "$TEST_GUARD_TAG" \
   > './test/'"test_$FNAME.h"
+
 printf "#include \"%s\"\n" \
   "test_$FNAME.h" \
   > './test/'"test_$FNAME.cpp"
