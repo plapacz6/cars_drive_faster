@@ -81,7 +81,7 @@ void destroy_mutex(){
 }
 
 void get_time(timespec *ptr_now, long ns){
-pthread_mutex_lock(&mtx.lock_get_time);
+    pthread_mutex_lock(&mtx.lock_get_time);
     int ret = clock_gettime(CLOCK_MONOTONIC, ptr_now);
     if(ret){
       cerr << "game_control(), clock_gettime()" << endl;
