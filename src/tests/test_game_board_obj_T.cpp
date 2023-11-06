@@ -15,6 +15,7 @@ using namespace std;
  * @brief mocking class for move_en_T
  * difference is that vectors gbobj i step are public
  * letting access to it in tests
+ * and real class move_en_T may not contain vector gbobj and step
  */
 class move_en_T {
 public:

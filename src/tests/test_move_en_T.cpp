@@ -120,7 +120,7 @@ TEST_CASE("Calculate coordinates registerd game_board_obj") {
 
 
     //TESTING
-    for(size_t k = 0; k < 3; k++) {
+    for(int k = 0; k < 3; k++) {
 
         //CHECKING game_board_objects PARAMETERS
         for(size_t t = 0; t < test_def_count; t++) {            
@@ -128,7 +128,7 @@ TEST_CASE("Calculate coordinates registerd game_board_obj") {
             //during move speed doesn't change
             for(size_t j = 0; j < board_dim; j++){
                 REQUIRE(test_definition[t].o->speed[j] == 
-                    test_definition[t].obj_speed_initial + (test_definition[t].obj_speed_step * j)
+                    test_definition[t].obj_speed_initial + (test_definition[t].obj_speed_step * (int)j)
                 );
             }
 
@@ -136,18 +136,18 @@ TEST_CASE("Calculate coordinates registerd game_board_obj") {
             for(size_t i = 0; i < board_dim; i++){
                 variable_print_T* v = new variable_print_T(t, k, i, 0);
                 REQUIRE(test_definition[t].o->pos[i] == 
-                    test_definition[t].obj_pos_initial + (test_definition[t].obj_pos_step * i) + 
+                    test_definition[t].obj_pos_initial + (test_definition[t].obj_pos_step * (int)i) + 
                     (
                         ( test_definition[t].obj_move_en 
                             ? k * (
                                 test_definition[t].obj_speed_initial + 
-                                (test_definition[t].obj_speed_step * i)
+                                (test_definition[t].obj_speed_step * (int)i)
                             ) 
                             : 0 
                         )
                         + 
                         ( test_definition[t].player_move_en 
-                            ? (k * board.player_speed[i])
+                            ? k * (board.player_speed[i])
                             : 0
                         )
                     )
@@ -158,7 +158,7 @@ TEST_CASE("Calculate coordinates registerd game_board_obj") {
 
                 //during move obj size doesn't change
                 REQUIRE(test_definition[t].o->pos[i + board_dim] == 
-                    test_definition[t].obj_size_initial + (test_definition[t].obj_size_step * i)
+                    test_definition[t].obj_size_initial + (test_definition[t].obj_size_step * (int)i)
                 );
             }  
 
@@ -223,7 +223,7 @@ TEST_CASE("Calculate coordinates registerd game_board_obj ver1") {
     }    
 
     
-    for(size_t k = 0; k < 3; k++) {
+    for(int k = 0; k < 3; k++) {
 
         //--------------------------------------------------
         //CHECK game_board_obj_T PARAMETERS
@@ -232,31 +232,31 @@ TEST_CASE("Calculate coordinates registerd game_board_obj ver1") {
             REQUIRE(o1.speed[j] == 0);
         }
         for(size_t i = 0; i < board_dim; i++){
-            REQUIRE(o1.pos[i] == i + 10 + (board.player_speed[i] * k));
+            REQUIRE(o1.pos[i] == (int)i + 10 + (board.player_speed[i] * k));
             REQUIRE(o1.pos[i + board_dim] == 10);                
         }
 
         for(size_t j = 0; j < board_dim; j++){
-            REQUIRE(o2.speed[j] == j + 1) ; //x:1, y:2, 3
+            REQUIRE(o2.speed[j] == (int)j + 1) ; //x:1, y:2, 3
         }
         for(size_t i = 0; i < board_dim; i++){
-            REQUIRE(o2.pos[i] == i + 20 + (board.player_speed[i] * k) + (o2.speed[i] * k));
+            REQUIRE(o2.pos[i] == (int)i + 20 + (board.player_speed[i] * k) + (o2.speed[i] * k));
             REQUIRE(o2.pos[i + board_dim] == 10);                
         }    
 
         for(size_t j = 0; j < board_dim; j++){
-            REQUIRE(o3.speed[j] == -1 *(j + 1) ) ; //x:-1, y:-2, -3
+            REQUIRE(o3.speed[j] == -1 *((int)j + 1) ) ; //x:-1, y:-2, -3
         }
         for(size_t i = 0; i < board_dim; i++){
-            REQUIRE(o3.pos[i] == i + 30 + (board.player_speed[i] * k) + (o3.speed[i] * k));
+            REQUIRE(o3.pos[i] == (int)i + 30 + (board.player_speed[i] * k) + (o3.speed[i] * k));
             REQUIRE(o3.pos[i + board_dim] == 10);                
         }    
 
         for(size_t j = 0; j < board_dim; j++){
-            REQUIRE(o4.speed[j] == j + 1) ; //x:1, y:2, 3
+            REQUIRE(o4.speed[j] == (int)j + 1) ; //x:1, y:2, 3
         }
         for(size_t i = 0; i < board_dim; i++){
-            REQUIRE(o4.pos[i] == i + 40 + (o4.speed[i] * k));
+            REQUIRE(o4.pos[i] == (int)i + 40 + (o4.speed[i] * k));
             REQUIRE(o4.pos[i + board_dim] == 10);                
         }    
         //--------------------------------------------------

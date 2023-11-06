@@ -7,8 +7,7 @@
 
 #include "dimension.h"
 #include "game_obj_T.h"
-// #include "move_en_T.h"
-// #include "board_T.h"
+//#include "board_T.h"
 
 class move_en_T;
 class board_T;

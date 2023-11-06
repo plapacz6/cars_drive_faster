@@ -5,6 +5,8 @@
 #include <vector>
 #include "game_board_obj_T.h"
 
+class game_board_obj_T;
+
 /**
  * class move_en_T
  */
@@ -46,7 +48,7 @@ private:
     /* vector value of the distance that each of the registered objects jumps in one
     *  time unit
     */
-    std::vector<int (*)[board_dim]> step;
+    std::vector<int (*)[board_dim]> step;    
 };
 
 #endif // MOVE_EN_T_H

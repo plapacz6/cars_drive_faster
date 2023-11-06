@@ -9,9 +9,13 @@ game_board_obj_T::game_board_obj_T(
     move_en_T *mv_player_en,
     move_en_T *mv_obj_en,
     board_T& board
-) :  speed {0, 0}, present {true}
+) :  present {true}
 {
     PDEBUG("game_board_obj_T: constructor");
+
+    for(size_t i = 0; i < board_dim; i++) {
+        speed[i] = 0;
+    }    
     if(mv_player_en) {
         PDEBUG("game_board_obj_T_constructor: player_speed : " << &board.player_speed);
         mv_player_en->signup(this, &board.player_speed);
