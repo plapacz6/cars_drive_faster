@@ -11,7 +11,7 @@ namespace csfgame {
 
 class T_CollisionChecker {
 public:
-    T_CollisionChecker(T_Car1 * ptr_car1);
+    T_CollisionChecker(T_Car1& car1);
     T_CollisionChecker(const  T_CollisionChecker&) = delete;
     virtual ~T_CollisionChecker() = default;
     T_CollisionChecker& operator=(const T_CollisionChecker&) = delete;
@@ -20,10 +20,10 @@ public:
     //void set_(TTT);
     //TTT get_() const;
 
-    bool with_hole(T_Obstacle *ptr_obj);
-    bool with_car2(T_Obstacle *ptr_obj);
+    bool with(T_RoadHole& road_hole);
+    bool with(T_Car2& car2);
 
-    T_Car1 * ptr_car1;
+    T_Car1& car1;
 
 protected:
 private:

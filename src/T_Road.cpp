@@ -82,19 +82,22 @@ T_Road::T_Road()
     paste_img(game_images.img_roadside, roadside_R, empty_road);
 }
 
-//T_Road::~T_Road() override { }
-
-//setters and getters:
-//void T_Road::set_(TTT) { }
-//TTT T_Road::get_() const { }
-
 void T_Road::calculate_shift(double curr_speed) {
-    cout << "calc_shift() " << endl;     
-    v_shift_unit.set( static_cast<int>(       //50px == 2cm = 0,02m ->   0.01m == 25px == 1m real
-                          (curr_speed ) *                      //10 == 4km/h == 1.1m/s
-                          (b_df.time_period_ns ) / 26500000)   //33000000ns == 0,033s
-                    );                                       //--------------------------
-    //0.033s -> 0.3m/s -> 25px/3 = 8.33 px
+    PMDEBUG("calc_shift() ");
+    v_shift_unit.set( static_cast<int>(       
+                          (curr_speed)
+                          * (b_df.time_period_ns) 
+                          / 26500000) //== curr_speed * (1,245283019)
+                    );   
+    /*  TODO:
+    
+        speed * time = length
+        50px == 2cm = 0,02m ->   0.01m == 25px == 1m real
+        10 == 4km/h == 1.1m/s
+        33000000ns == 0,033s
+        --------------------------  
+        0.033s -> 0.3m/s -> 25px/3 = 8.33 px
+    */
     //PDEBUG_(v_shift_unit.get());
 }
 

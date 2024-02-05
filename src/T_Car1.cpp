@@ -54,4 +54,17 @@ void T_Car1::set_speed(double&& speed_car1_) {
     pthread_mutex_unlock(&mtx.lock_speed_car1);
 }
 
+void T_Car1::to_right() {
+            if(ptr_coord == &road.car1_M) /* order is important: checking M before R */
+                ptr_coord = &road.car1_L;
+            if(ptr_coord == &road.car1_R)
+                ptr_coord = &road.car1_M;
+}
+void T_Car1::to_left() {
+            if(ptr_coord == &road.car1_M)
+                ptr_coord = &road.car1_R;
+            if(ptr_coord == &road.car1_L)
+                ptr_coord = &road.car1_M;
+}
+
 } //namespace csfgame

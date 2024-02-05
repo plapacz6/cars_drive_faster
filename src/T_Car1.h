@@ -23,13 +23,16 @@ public:
     T_Road& road;
     double speed;
 
-    T_Rect *ptr_coord;         /*< current coordinates */
+    T_Rect *ptr_coord;         /*< current coordinates on board (fixed 3 places) */
+    
 
     //class speed_car1_t { //TODO
     double speed_car1;
     void zeros_speed();
     double get_speed();
     void set_speed(double&& speed_car1_);
+    void to_right();
+    void to_left();
 
 protected:
 private:

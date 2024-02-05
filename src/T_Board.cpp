@@ -30,9 +30,9 @@ board_def_t b_df = {
     .time_period_s = 0,
     .time_speed_up_ns = 1000000000,
     .time_speed_up_s = 0,
-    //.begining_speed_car1= 0.1,    //now in car class
+    //.begining_speed_car1= 0.1,    //now in T_Car class
     .step_speed_up = 0.4,
-    //.max_speed = 35.0             //now in car class
+    //.max_speed = 35.0             //now in T_Car class
 };
 
 T_Rect board_def_t::calc_begin_rect_lane(Mat &img, TBoardSector place) {
