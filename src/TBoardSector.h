@@ -31,22 +31,7 @@ enum class TBoardSector : size_t {
     ROADSIDE_L = 3,
     ROADSIDE_R = 4,
     ANY = 5
-
-// public:
-//     static size_t get_uint(TBoardSector v);
-//     static TBoardSector get_BoardSector(size_t i);
-//     static TBoardSector get_BoardLine(size_t i);
-//     static size_t size();
-//     static size_t lines_number();
-//     static size_t get_LineIdx(TBoardSector l);
 };
-
-// static size_t TBoardSector::get_uint(TBoardSector v);
-// static TBoardSector TBoardSector::get_BoardSector(size_t i);
-// static TBoardSector TBoardSector::get_BoardLine(size_t i);
-// static size_t TBoardSector::size();
-// static size_t TBoardSector::lines_number();
-// static size_t TBoardSector::get_LineIdx(TBoardSector l);
 
 } //namespace csfgame
 #endif //TBOARDSECTOR_H
