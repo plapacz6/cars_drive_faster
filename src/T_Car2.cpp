@@ -3,6 +3,7 @@
 #include "T_GameImages.h"
 #include "T_VShiftUnit.h"
 #include "PasteImgFunctions.h"
+#include "pdebug.h"
 
 using namespace std;
 namespace csfgame {
@@ -21,6 +22,13 @@ void T_Car2::reset() {
     coord.y -= game_images.img_car2.rows;
     processed = true;
 }
+
+void T_Car2::draw_new() {
+    set_beg_position();
+    set_beg_speed();
+    reset();
+}
+
 void T_Car2::action() {
     coord.y += v_shift_unit.get();
     coord.y -= speed * ((b_df.time_period_ns ) / 26500000);
@@ -45,9 +53,17 @@ void T_Car2::set_beg_position(TBoardSector pos) {
 }
 
 void T_Car2::set_beg_speed(double speed) {
-    if(speed != beginnig_speed) {
+    if(speed != 0) {
         this->speed = speed;
     }
+    else {
+        /*
+        T_Car2 is initially on a visible part of the road,
+        so if its speed will be much greater than the speed of T_Car1
+        it will never be visible because T_Car1 will never catch up with it
+        */
+        this->speed = (rand()%(static_cast<int>(max_speed/10) * 100))/100.0;
+    }           
 }
 
 } //namespace csfgame

@@ -13,6 +13,7 @@ public:
     virtual ~T_Car2() = default;
     T_Car2& operator=(const T_Car2&) = default;
 
+    void draw_new();
     void reset();
     void action();
 
@@ -30,9 +31,9 @@ public:
     /**
      * @brief Set the beg speed object
      *
-     * @param speed double
+     * @param speed double  (0 means draw new speed)
      */
-    void set_beg_speed(double speed = beginnig_speed);
+    void set_beg_speed(double speed = 0);
 
 protected:
 private:

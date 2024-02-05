@@ -12,6 +12,7 @@ public:
     virtual ~T_RoadHole() = default;
     T_RoadHole& operator=(const T_RoadHole&) = delete;
 
+    void draw_new();
     void action();
     void reset();
 

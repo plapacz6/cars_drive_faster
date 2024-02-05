@@ -15,6 +15,12 @@ T_SteppeBush::T_SteppeBush() {
 // T_SteppeBush::~T_SteppeBush() {
 // }
 
+void T_SteppeBush::draw_new() {
+    set_beg_distance();
+    set_beg_sector();
+    set_end_position();    
+    reset();
+}
 void T_SteppeBush::action() {
     //TODO: calcualte coord according to current road speed
     paste_img(game_images.img_bush, coord, board.b);

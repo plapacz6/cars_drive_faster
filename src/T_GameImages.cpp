@@ -31,7 +31,7 @@ T_GameImages::T_GameImages() {
     imagesArrays.push_back(make_tuple(&img_hole, hole_png, hole_png_len));
     imagesArrays.push_back(make_tuple(&img_lane, lane_png, lane_png_len));
     imagesArrays.push_back(make_tuple(&img_lane_dotted, line_dotted_png, line_dotted_png_len));
-    imagesArrays.push_back(make_tuple(&img_lane_dotted, roadside_png, roadside_png_len));
+    imagesArrays.push_back(make_tuple(&img_roadside, roadside_png, roadside_png_len));
     load_images();
 }
 

@@ -21,6 +21,11 @@ void T_RoadHole::reset() {
     processed = true;
 }
 
+void T_RoadHole::draw_new() {
+    set_beg_position();
+    reset();    
+}
+
 void T_RoadHole::action() {
     coord.y += v_shift_unit.get();
     paste_img_vert_partialy(game_images.img_hole, coord, board.b);

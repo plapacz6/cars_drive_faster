@@ -9,9 +9,7 @@ ver: 0.1.0
 #include <opencv2/highgui.hpp>
 
 #include <iostream>
-
 #include <unistd.h>
-
 #include <thread>
 
 // #include <mutex>
@@ -131,10 +129,10 @@ void game_control(bool *ptr_game_break) {
         }
 
         if(!hole2.processed) {
-            hole2.reset();
+            hole2.draw_new();
         }
         if(!car2.processed) {
-            car2.reset();
+            car2.draw_new();
         }
         game_clock.sleep(b_df.time_period_ns);
     }
@@ -176,6 +174,7 @@ int main() {
     T_Road road;
     ptr_road = &road;
     std::thread th_game_control(game_control, &game_break);
+    sleep(1);  //time for laoding textures
     std::thread th_speed_up(speed_up, &game_break);
 
     th_game_control.join();
