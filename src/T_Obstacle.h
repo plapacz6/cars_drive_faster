@@ -2,6 +2,7 @@
 #define OBSTACLE_H
 #include "T_Rect.h"
 #include "TBoardSector.h"
+#include "TOption.h"
 
 namespace csfgame {
 

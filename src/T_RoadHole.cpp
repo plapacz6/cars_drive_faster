@@ -23,7 +23,7 @@ void T_RoadHole::reset() {
 
 void T_RoadHole::draw_new() {
     set_beg_position();
-    reset();    
+    reset();
 }
 
 void T_RoadHole::action() {
@@ -45,7 +45,7 @@ void T_RoadHole::set_beg_position(TBoardSector pos) {
     else {
         size_t beg_pos_idx = rand() % TBoardSecor_lines_number;
         assert(beg_pos_idx < 3);
-        beg_pos = static_cast<TBoardSector>(beg_pos_idx);            
+        beg_pos = static_cast<TBoardSector>(beg_pos_idx);
     }
 }
 

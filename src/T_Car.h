@@ -14,8 +14,8 @@ public:
     //void set_(TTT);
     //TTT get_() const;
 
-    static double constexpr max_speed {35.0};       /*< max speed of each car*/
-    static double constexpr beginnig_speed {0.1};   /*< beginnig speed of each car*/
+    static double constexpr max_speed {350};       /*< max speed of each car*/
+    static double constexpr beginnig_speed {10};   /*< beginnig speed of each car*/
 
 protected:
 private:

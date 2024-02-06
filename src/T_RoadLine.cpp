@@ -9,7 +9,7 @@ namespace csfgame {
 
 T_RoadLine::T_RoadLine(TBoardSector lane_on_left, road_line_type_t type_) {
     CV_Assert(
-        static_cast<size_t>(lane_on_left) < 3 && 
+        static_cast<size_t>(lane_on_left) < 3 &&
         static_cast<size_t>(lane_on_left) >= 0);
 
     int line_half_width;

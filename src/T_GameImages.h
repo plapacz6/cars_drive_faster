@@ -26,7 +26,7 @@ public:
     cv::Mat img_lane_dotted;
 
     std::vector<std::tuple<cv::Mat*, unsigned char*, unsigned int>> imagesArrays;
-    
+
     void load_images();
 
 protected:

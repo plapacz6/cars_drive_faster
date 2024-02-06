@@ -46,12 +46,12 @@ T_Car1 *ptr_car1 = nullptr;  /*< used by two threads */
 
 /* ----------------------------------------- */
 enum key_nr_t {
-    KEY_ESC = 1048603,    
-    KEY_ESC_CAPSLOCK = 1179675,    
-    KEY_LARROW = 1113937,    
+    KEY_ESC = 1048603,
+    KEY_ESC_CAPSLOCK = 1179675,
+    KEY_LARROW = 1113937,
     KEY_RARROR = 1113939,
 
-    COMMAND_end = KEY_ESC,    
+    COMMAND_end = KEY_ESC,
     COMMAND_END = KEY_ESC_CAPSLOCK,
     COMMAND_LEFT = KEY_LARROW,
     COMMAND_RIGHT = KEY_RARROR
@@ -80,6 +80,7 @@ void game_control(bool *ptr_game_break) {
 
     T_Car2 car2;
     T_RoadHole hole2;
+    T_SteppeBush bush;
 
     /* EXAMPLE */
 
@@ -89,35 +90,37 @@ void game_control(bool *ptr_game_break) {
         command = static_cast<key_nr_t>(pollKey());
         /* command = pollKey() == waitKeyEx(0) != waitKey(0) */
 
-        for(size_t i = 0; i < road.road_objects.size(); i++) {
-            road.road_objects[i].action();
-        }
-        
         road.draw();
 
         if(command == COMMAND_LEFT) {
-            my_car.to_right();
-        }
-        else 
-        if(command == COMMAND_RIGHT) {
             my_car.to_left();
         }
+        else if(command == COMMAND_RIGHT) {
+            my_car.to_right();
+        }
 
+        /* not working currently */
+        // for(size_t i = 0; i < road.road_objects.size(); i++) {
+        //     road.road_objects[i].action();
+        // }
         /* EXAMPLE */
         hole2.action();
         car2.action();
+        bush.action();
         /* EXAMPLE */
 
         my_car.action();
 
         board.show();
 
-        if(collision_car1.with(hole2)) {           
+        if(collision_car1.with(hole2)) {
             ptr_road->calculate_shift(my_car.get_speed());
         }
-        else
-        if(collision_car1.with(car2)) {
-            ptr_road->calculate_shift(my_car.get_speed());        
+        else if(collision_car1.with(car2)) {
+            ptr_road->calculate_shift(my_car.get_speed());
+        }
+        if(collision_car1.with(bush)) {
+            ptr_road->calculate_shift(my_car.get_speed());
         }
 
         if(!hole2.processed) {
@@ -125,6 +128,9 @@ void game_control(bool *ptr_game_break) {
         }
         if(!car2.processed) {
             car2.draw_new();
+        }
+        if(!bush.processed) {
+            bush.draw_new();
         }
         game_clock.sleep(b_df.time_period_ns);
     }

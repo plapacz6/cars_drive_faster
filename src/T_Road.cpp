@@ -14,8 +14,8 @@ using namespace std;
 namespace csfgame {
 
 T_Road::T_Road()
-    : 
-    line1(TBoardSector::LANE_L, LINE_DOTTED), 
+    :
+    line1(TBoardSector::LANE_L, LINE_DOTTED),
     line2(TBoardSector::LANE_R, LINE_DOTTED)
 {
     empty_road = cv::Mat::zeros(
@@ -84,18 +84,19 @@ T_Road::T_Road()
 
 void T_Road::calculate_shift(double curr_speed) {
     PMDEBUG("calc_shift() ");
-    v_shift_unit.set( static_cast<int>(       
+    v_shift_unit.set( static_cast<int>(
                           (curr_speed)
-                          * (b_df.time_period_ns) 
-                          / 26500000) //== curr_speed * (1,245283019)
-                    );   
+                          / 10)   //ARYTMINT
+                      //   * (b_df.time_period_ns)
+                      //   / 26500000) //== curr_speed * (1,245283019)
+                    );
     /*  TODO:
-    
+
         speed * time = length
         50px == 2cm = 0,02m ->   0.01m == 25px == 1m real
         10 == 4km/h == 1.1m/s
         33000000ns == 0,033s
-        --------------------------  
+        --------------------------
         0.033s -> 0.3m/s -> 25px/3 = 8.33 px
     */
     //PDEBUG_(v_shift_unit.get());

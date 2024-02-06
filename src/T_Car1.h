@@ -24,7 +24,7 @@ public:
     double speed;
 
     T_Rect *ptr_coord;         /*< current coordinates on board (fixed 3 places) */
-    
+
 
     //class speed_car1_t { //TODO
     double speed_car1;

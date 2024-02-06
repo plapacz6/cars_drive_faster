@@ -29,6 +29,7 @@ list(APPEND obj_targets_list
     TBoardSector
     T_Car    
     T_VShiftUnit
+    TOption
 )
 foreach(obj_target IN LISTS obj_targets_list)
     list(APPEND obj_targets_src_list "${obj_target}.cpp")    
@@ -64,4 +65,3 @@ foreach(target IN LISTS targets_list)
 endforeach()
 
 add_subdirectory(test)
-

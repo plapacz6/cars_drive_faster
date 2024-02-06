@@ -22,6 +22,7 @@ public:
 
     bool with(T_RoadHole& road_hole);
     bool with(T_Car2& car2);
+    bool with(T_SteppeBush& bush);
 
     T_Car1& car1;
 

@@ -5,7 +5,7 @@
 
 namespace csfgame {
 
-class T_SteppeBush : T_Obstacle {
+class T_SteppeBush : public T_Obstacle {
 public:
     explicit T_SteppeBush();
     T_SteppeBush(const  T_SteppeBush&) = default;
@@ -39,10 +39,22 @@ public:
      */
     void set_end_position(TBoardSector pos = TBoardSector::ANY);
 
+    /**
+     * @brief Set the if check end position object
+     *
+     * @param check_end_pos true - draw if check end position
+     */
+    void set_if_check_end_position(TOption opt = TOption::RANDOM);
+    bool check_end_position; /*< if set to false bush object will be moving to edge of board*/
+
     TBoardSector beg_pos; /*< beginning sector of board for StepperBush obj*/
     TBoardSector end_pos; /*< ending line sector of board for StepperBush obj*/
     int distance;         /*< beginnig distance of StepperBush obj from player
                             int percent of the more distanct half of the road */
+    int horizontal_step;  /*< distance in px traveled during one unit time
+                              set in reset() based on beg_posistion and taget_coord*/
+    void calculate_horizontal_step();
+
 protected:
 private:
 };

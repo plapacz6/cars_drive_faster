@@ -31,7 +31,7 @@ void T_Car2::draw_new() {
 
 void T_Car2::action() {
     coord.y += v_shift_unit.get();
-    coord.y -= speed * ((b_df.time_period_ns ) / 26500000);
+    coord.y -= speed * ((b_df.time_period_ns ) / 26500000);  //ARYTMINT
     paste_img_vert_partialy(game_images.img_car2, coord, board.b);
     if(coord.y > b_df.road_hight) {
         processed = false;
@@ -48,7 +48,7 @@ void T_Car2::set_beg_position(TBoardSector pos) {
     else {
         size_t beg_pos_idx = rand() % TBoardSecor_lines_number;
         assert(beg_pos_idx < 3);
-        beg_pos = static_cast<TBoardSector>(beg_pos_idx);        
+        beg_pos = static_cast<TBoardSector>(beg_pos_idx);
     }
 }
 
@@ -63,7 +63,8 @@ void T_Car2::set_beg_speed(double speed) {
         it will never be visible because T_Car1 will never catch up with it
         */
         this->speed = (rand()%(static_cast<int>(max_speed/10) * 100))/100.0;
-    }           
+        //ARYTMINT
+    }
 }
 
 } //namespace csfgame
