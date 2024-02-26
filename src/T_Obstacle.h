@@ -14,7 +14,7 @@ public:
     T_Obstacle& operator=(const T_Obstacle&) = default;
 
     T_Rect coord;         //< current coordinates
-    virtual void draw_new() = 0;
+    virtual void draw_a_new_one() = 0;
     virtual void reset() = 0;
     virtual void action() = 0;
     bool processed;

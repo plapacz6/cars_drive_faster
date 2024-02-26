@@ -22,7 +22,7 @@ void T_RoadHole::reset() {
     processed = true;
 }
 
-void T_RoadHole::draw_new() {
+void T_RoadHole::draw_a_new_one() {
     set_beg_position();
     reset();
 }

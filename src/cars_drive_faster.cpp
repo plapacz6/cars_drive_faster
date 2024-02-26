@@ -33,6 +33,7 @@ using namespace cv;
 #include "T_RoadLine.h"
 #include "T_Road.h"
 #include "T_Car1.h"
+#include "T_GameDefs.h"
 #include "T_Board.h"
 #include "T_VShiftUnit.h"
 #include "T_CollisionChecker.h"
@@ -124,13 +125,13 @@ void game_control(bool *ptr_game_break) {
         }
 
         if(!hole2.processed) {
-            hole2.draw_new();
+            hole2.draw_a_new_one();
         }
         if(!car2.processed) {
-            car2.draw_new();
+            car2.draw_a_new_one();
         }
         if(!bush.processed) {
-            bush.draw_new();
+            bush.draw_a_new_one();
         }
         game_clock.sleep(b_df.time_period_ns);
     }

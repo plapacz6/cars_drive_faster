@@ -13,7 +13,7 @@ public:
     virtual ~T_Car2() = default;
     T_Car2& operator=(const T_Car2&) = default;
 
-    void draw_new();
+    void draw_a_new_one();
     void reset();
     void action();
 

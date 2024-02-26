@@ -12,7 +12,7 @@ public:
     virtual ~T_SteppeBush() = default;
     T_SteppeBush& operator=(const T_SteppeBush&) = default;
 
-    void draw_new();
+    void draw_a_new_one();
     void action();
     void reset();
     T_Rect coord_targed;  /*< target coordinates */

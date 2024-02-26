@@ -24,7 +24,7 @@ void T_Car2::reset() {
     processed = true;
 }
 
-void T_Car2::draw_new() {
+void T_Car2::draw_a_new_one() {
     set_beg_position();
     set_beg_speed();
     reset();

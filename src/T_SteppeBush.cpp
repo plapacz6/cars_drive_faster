@@ -18,7 +18,7 @@ T_SteppeBush::T_SteppeBush() {
 // T_SteppeBush::~T_SteppeBush() {
 // }
 
-void T_SteppeBush::draw_new() {
+void T_SteppeBush::draw_a_new_one() {
     set_beg_distance();
     set_beg_sector();
     set_end_position();
