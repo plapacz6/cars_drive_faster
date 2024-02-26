@@ -7,7 +7,7 @@ namespace csfgame {
 
 class T_GameMutexes {
 public:
-    T_GameMutexes();
+    explicit T_GameMutexes();
     T_GameMutexes(const  T_GameMutexes&) = delete;
     virtual ~T_GameMutexes() = default;
     T_GameMutexes& operator=(const T_GameMutexes&) = delete;

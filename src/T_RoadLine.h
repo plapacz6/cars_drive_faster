@@ -17,7 +17,7 @@ public:
     *
     * @param lane_on_left //< (LANE_L, LANE_M)
     */
-    T_RoadLine(TBoardSector lane_on_left, road_line_type_t type_);
+    explicit T_RoadLine(TBoardSector lane_on_left, road_line_type_t type_);
     T_RoadLine(const  T_RoadLine&) = delete;
     virtual ~T_RoadLine() = default;
     T_RoadLine& operator=(const T_RoadLine&) = delete;

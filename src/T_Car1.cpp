@@ -1,19 +1,14 @@
 #include "T_Car1.h"
 #include "T_GameMutexes.h"
 #include "T_GameImages.h"
+#include "T_GameDefs.h"
 #include "T_Board.h"
 #include "PasteImgFunctions.h"
 
 using namespace std;
 namespace csfgame {
 
-/**
- * @brief Construct a new car1 t::car1 t object
- *
- * @param road_ object road, stroing Rec of car1 position on each lane
- * @param begin_pos_ TBoardSector  beginning lane
- * @param speed_     beginning speed
- */
+
 T_Car1::T_Car1(T_Road& road_, TBoardSector begin_pos_, double speed_)
     : road(road_)
 {
@@ -24,9 +19,6 @@ T_Car1::T_Car1(T_Road& road_, TBoardSector begin_pos_, double speed_)
     else //if(begin_pos_ == TBoardSector::LANE_M)  //each other set defaut to middle position
         ptr_coord = &road_.car1_M;
 }
-
-// T_Car1::~T_Car1() {
-// }
 
 
 void T_Car1::action() {

@@ -1,4 +1,5 @@
 #include "T_SteppeBush.h"
+#include "T_GameDefs.h"
 #include "T_Board.h"
 #include "T_GameImages.h"
 #include "T_VShiftUnit.h"

@@ -21,6 +21,7 @@ list(APPEND obj_targets_list
     T_RoadLine
     T_Road
     T_Board
+    T_GameDefs
     T_GameMutexes
     T_TimeController
     T_GameImages

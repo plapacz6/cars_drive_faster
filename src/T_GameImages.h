@@ -8,7 +8,7 @@ namespace csfgame {
 //class game_images_t {
 class T_GameImages {
 public:
-    T_GameImages();
+    explicit T_GameImages();
     T_GameImages(const  T_GameImages&) = delete;
     virtual ~T_GameImages() = default;
     T_GameImages& operator=(const T_GameImages&) = delete;

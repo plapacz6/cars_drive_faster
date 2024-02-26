@@ -1,6 +1,7 @@
 #include <thread>
 
 #include "T_Road.h"
+#include "T_GameDefs.h"
 #include "T_Board.h"
 #include "T_VShiftUnit.h"
 #include "T_GameMutexes.h"

@@ -27,6 +27,7 @@ list(APPEND targets_test_list
     T_Car_test    
     T_VShiftUnit_test
     TOption_test
+    T_GameDefs_test
 )
 foreach(target_test IN LISTS targets_test_list)
     list(APPEND targets_test_src_list "${target_test}.cpp")

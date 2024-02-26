@@ -14,7 +14,7 @@ namespace csfgame {
  */
 class T_VShiftUnit {
 public:
-    T_VShiftUnit() {
+    explicit T_VShiftUnit() {
         pthread_mutex_lock(&mtx.lock_speed_car1);
         pthread_mutex_lock(&mtx.lock_v_shift_unit);
         v_shift_unit = 0;
