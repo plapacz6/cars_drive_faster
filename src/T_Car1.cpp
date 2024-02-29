@@ -26,7 +26,7 @@ void T_Car1::action() {
 }
 
 
-//class speed_car1_t { //TODO
+//class speed_car1_t { //TODO //MTX_SC1
 void T_Car1::zeros_speed() {
     pthread_mutex_lock(&mtx.lock_speed_car1);
     speed_car1 = beginnig_speed;

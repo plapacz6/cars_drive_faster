@@ -146,16 +146,18 @@ void game_control(bool *ptr_game_break) {
  */
 void speed_up(bool *ptr_game_break) {
 
-    double speed_car1_get;
+    double car1_speed_curr;
 
     while(!*ptr_game_break) {
 
         game_clock.sleep(b_df.time_speed_up_ns);
+        
+        static double const car1_almost_max_speed = ptr_car1->max_speed - b_df.car1_step_speed_up;
+        car1_speed_curr = ptr_car1->get_speed();
 
-        speed_car1_get = ptr_car1->get_speed();
-        if(speed_car1_get < ptr_car1->max_speed +  b_df.step_speed_up) {
-            ptr_car1->set_speed( (speed_car1_get + b_df.step_speed_up) );
-            ptr_road->calculate_shift(ptr_car1->get_speed());
+        if(car1_speed_curr <= car1_almost_max_speed){ 
+            ptr_car1->set_speed( (car1_speed_curr + b_df.car1_step_speed_up) );
+            ptr_road->calculate_shift(car1_speed_curr);
         }
 
         PDEBUG_(ptr_car1->get_speed());
@@ -173,7 +175,7 @@ int main() {
     T_Road road;
     ptr_road = &road;
     std::thread th_game_control(game_control, &game_break);
-    sleep(1);  //time for laoding textures
+    sleep(2);  //time for laoding textures
     std::thread th_speed_up(speed_up, &game_break);
 
     th_game_control.join();

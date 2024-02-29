@@ -24,10 +24,13 @@ class T_GameDefs {
     time_t time_period_s;
     long time_speed_up_ns;
     time_t time_speed_up_s;
-    //double begining_speed_car1;    //moved to  T_Car
-    double step_speed_up;
-    //double max_speed;              //moved to T_Car
+    
+    double const car1_step_speed_up;
+    
     int horizontal_step;  /*< distances tarveled horizontaly by bush in one unit time*/
+
+    double const car_max_speed;       /*< max speed of each car*/
+    double const car_beginnig_speed;   /*< beginnig speed of each car*/
 
     /**
      * @brief calculate coordinates of rectangle where object image

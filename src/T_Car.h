@@ -10,12 +10,9 @@ public:
     virtual ~T_Car() = default;
     T_Car& operator=(const T_Car&) = default;
 
-    //setters and getters:
-    //void set_(TTT);
-    //TTT get_() const;
-
-    static double constexpr max_speed {350};       /*< max speed of each car*/
-    static double constexpr beginnig_speed {10};   /*< beginnig speed of each car*/
+    //reference to T_GameDefs
+    static double const& max_speed;        /*< max speed of each car*/
+    static double const& beginnig_speed;   /*< beginnig speed of each car*/
 
 protected:
 private:

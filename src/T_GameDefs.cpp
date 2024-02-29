@@ -10,7 +10,10 @@ namespace csfgame {
 T_GameDefs b_df;
 
 T_GameDefs::T_GameDefs()
-    : wndName {"cars - higher speed"}
+    : wndName {"cars - higher speed"},
+    car_max_speed {350},       /*< max speed of each car*/
+    car_beginnig_speed {10},   /*< beginnig speed of each car*/    
+    car1_step_speed_up {20}   //0.4,      //ARYTMINT    
 {
     roadside_width = 200;
     lane_width = 75;
@@ -20,9 +23,9 @@ T_GameDefs::T_GameDefs()
     time_period_ns = 33000000;  //ms
     time_period_s = 0;
     time_speed_up_ns = 1000000000;
-    time_speed_up_s = 0;
-    step_speed_up = 20; //0.4,      //ARYTMINT
+    time_speed_up_s = 0;    
     horizontal_step = 20;  /*< distances tarveled horizontaly by bush in one unit time*/
+
 }
 
 T_Rect T_GameDefs::calc_begin_rect_lane(Mat &img, TBoardSector place) {

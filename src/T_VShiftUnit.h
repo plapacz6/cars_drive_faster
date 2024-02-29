@@ -12,7 +12,7 @@ namespace csfgame {
  * Because this variable is accessed by more than one thread
  * it is wrapped int that class co synchronize access.
  */
-class T_VShiftUnit {
+class T_VShiftUnit {  //MTX_SC1  //MTX_VSU
 public:
     explicit T_VShiftUnit() {
         pthread_mutex_lock(&mtx.lock_speed_car1);

@@ -20,8 +20,8 @@ list(APPEND obj_targets_list
     T_Car1
     T_RoadLine
     T_Road
-    T_Board
-    T_GameDefs
+    T_GameDefs  #must be before T_Board (initailization of board depends on value of b_df)
+    T_Board    
     T_GameMutexes
     T_TimeController
     T_GameImages

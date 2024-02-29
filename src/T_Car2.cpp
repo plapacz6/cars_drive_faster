@@ -15,9 +15,6 @@ T_Car2::T_Car2() {
     reset();
 }
 
-// T_Car2::~T_Car2() {
-// }
-
 void T_Car2::reset() {
     coord = b_df.calc_begin_rect_lane(game_images.img_car2, beg_pos);
     coord.y -= game_images.img_car2.rows;
