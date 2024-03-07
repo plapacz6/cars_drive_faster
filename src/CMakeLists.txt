@@ -20,7 +20,8 @@ list(APPEND obj_targets_list
     T_Car1
     T_RoadLine
     T_Road
-    T_Board
+    T_GameDefs  #must be before T_Board (initailization of board depends on value of b_df)
+    T_Board    
     T_GameMutexes
     T_TimeController
     T_GameImages
@@ -29,6 +30,7 @@ list(APPEND obj_targets_list
     TBoardSector
     T_Car    
     T_VShiftUnit
+    TOption
 )
 foreach(obj_target IN LISTS obj_targets_list)
     list(APPEND obj_targets_src_list "${obj_target}.cpp")    
@@ -64,4 +66,3 @@ foreach(target IN LISTS targets_list)
 endforeach()
 
 add_subdirectory(test)
-

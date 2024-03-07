@@ -22,7 +22,9 @@ enum lane_t {   //for road_t::def_rect()
 // };
 
 constexpr size_t TBoardSecor_lines_number = 3;
+constexpr size_t TBoardSecor_roadside_number = 2;
 constexpr size_t TBoardSecor_sectors_number = 5;
+
 
 enum class TBoardSector : size_t {
     LANE_L = 0,

@@ -1,4 +1,5 @@
 #include "T_RoadHole.h"
+#include "T_GameDefs.h"
 #include "T_Board.h"
 #include "T_GameImages.h"
 #include "T_VShiftUnit.h"
@@ -21,9 +22,9 @@ void T_RoadHole::reset() {
     processed = true;
 }
 
-void T_RoadHole::draw_new() {
+void T_RoadHole::draw_a_new_one() {
     set_beg_position();
-    reset();    
+    reset();
 }
 
 void T_RoadHole::action() {
@@ -45,7 +46,7 @@ void T_RoadHole::set_beg_position(TBoardSector pos) {
     else {
         size_t beg_pos_idx = rand() % TBoardSecor_lines_number;
         assert(beg_pos_idx < 3);
-        beg_pos = static_cast<TBoardSector>(beg_pos_idx);            
+        beg_pos = static_cast<TBoardSector>(beg_pos_idx);
     }
 }
 

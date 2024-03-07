@@ -8,7 +8,7 @@ namespace csfgame {
 
 class T_TimeController {
 public:
-    T_TimeController();
+    explicit T_TimeController();
     T_TimeController(const  T_TimeController&) = delete;
     virtual ~T_TimeController() = default;
     T_TimeController& operator=(const T_TimeController&) = delete;

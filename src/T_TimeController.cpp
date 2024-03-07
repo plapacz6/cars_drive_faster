@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include "T_TimeController.h"
+#include "T_GameDefs.h"
 #include "T_Board.h"
 #include "T_GameMutexes.h"
 #include "pdebug.h"

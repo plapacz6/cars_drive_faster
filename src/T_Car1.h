@@ -14,6 +14,13 @@ namespace csfgame {
  */
 class T_Car1 : public T_Car {
 public:
+    /**
+     * @brief Construct a new car1 t::car1 t object
+     *
+     * @param road_ object road, stroing Rec of car1 position on each lane
+     * @param begin_pos_ TBoardSector  beginning lane
+     * @param speed_     beginning speed
+     */
     T_Car1(T_Road& road_, TBoardSector begin_pos_, double speed_ = beginnig_speed);
     T_Car1(const  T_Car1&) = delete;
     virtual ~T_Car1() = default;
@@ -24,7 +31,7 @@ public:
     double speed;
 
     T_Rect *ptr_coord;         /*< current coordinates on board (fixed 3 places) */
-    
+
 
     //class speed_car1_t { //TODO
     double speed_car1;
