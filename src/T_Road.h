@@ -10,16 +10,18 @@ namespace csfgame {
 
 class T_Road {
 public:
-    T_Road();
+    explicit T_Road();
     T_Road(const  T_Road&) = delete;
     virtual ~T_Road() = default;
     T_Road& operator=(const T_Road&) = delete;
 
-    //setters and getters:
-    //void set_(TTT);
-    //TTT get_() const;
-
     void calculate_shift(double curr_speed);
+
+    /**
+     * @brief Calculate shift based on camera speed, 
+     * and draw only two RoadLines
+     * 
+     */
     void draw();
 
     int v_shift_total; //total shift

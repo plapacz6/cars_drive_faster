@@ -12,9 +12,9 @@ namespace csfgame {
  * Because this variable is accessed by more than one thread
  * it is wrapped int that class co synchronize access.
  */
-class T_VShiftUnit {
-    public:
-    T_VShiftUnit() {
+class T_VShiftUnit {  //MTX_SC1  //MTX_VSU
+public:
+    explicit T_VShiftUnit() {
         pthread_mutex_lock(&mtx.lock_speed_car1);
         pthread_mutex_lock(&mtx.lock_v_shift_unit);
         v_shift_unit = 0;
@@ -28,7 +28,7 @@ class T_VShiftUnit {
     int v_shift_unit;  /*< unit shift calculated based on car1 speed, and prev coord_shift */
 
     //setters and getters:
-    
+
     inline int get() {
         int v_shift_unit_;
         //cout << "v_shift_u.get() " << endl;
@@ -39,7 +39,7 @@ class T_VShiftUnit {
         pthread_mutex_unlock(&mtx.lock_speed_car1);
         return v_shift_unit_;
     }
-    
+
     inline void set(int v_shift_unit_) {
         //cout << "v_shift_u.set() " << endl;
         pthread_mutex_lock(&mtx.lock_speed_car1);
@@ -49,8 +49,8 @@ class T_VShiftUnit {
         pthread_mutex_unlock(&mtx.lock_speed_car1);
     }
 
-    protected:
-    private:
+protected:
+private:
 };
 
 extern T_VShiftUnit v_shift_unit;

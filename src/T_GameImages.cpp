@@ -24,7 +24,7 @@ namespace csfgame {
 #include "assets/line_dotted.h"
 #include "assets/roadside.h"
 
-T_GameImages::T_GameImages() {  
+T_GameImages::T_GameImages() {
     imagesArrays.push_back(make_tuple(&img_bush, bush_png, bush_png_len));
     imagesArrays.push_back(make_tuple(&img_car1, car1_png, car1_png_len));
     imagesArrays.push_back(make_tuple(&img_car2, car2_png, car2_png_len));
@@ -51,10 +51,10 @@ void T_GameImages::load_images() {
         // img_hole = imread("hole.jpg");
         // img_bush = imread("bush.png");
         // img_lane_dotted = imread("line_dotted.jpg");
-        for(auto [imgMat, dataBufor, dataLength] : imagesArrays) 
-        {            
+        for(auto [imgMat, dataBufor, dataLength] : imagesArrays)
+        {
             cv::Mat data = cv::Mat(1, dataLength, CV_8UC1, (void*)dataBufor);
-            *imgMat = cv::imdecode(data, cv::IMREAD_COLOR);    
+            *imgMat = cv::imdecode(data, cv::IMREAD_COLOR);
             if(imgMat->empty()) {
                 throw;
             }
