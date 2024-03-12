@@ -15,11 +15,11 @@ namespace csfgame {
 class T_VShiftUnit {  //MTX_SC1  //MTX_VSU
 public:
     explicit T_VShiftUnit() {
-        pthread_mutex_lock(&mtx.lock_speed_car1);
-        pthread_mutex_lock(&mtx.lock_v_shift_unit);
-        v_shift_unit = 0;
-        pthread_mutex_unlock(&mtx.lock_v_shift_unit);
-        pthread_mutex_unlock(&mtx.lock_speed_car1);
+        std::unique_lock sp(mtx.speed_car1, std::defer_lock);
+        std::unique_lock vs(mtx.v_shift_unit, std::defer_lock);
+        std::scoped_lock(sp, vs);
+
+        v_shift_unit = 0;        
     };
     T_VShiftUnit(const  T_VShiftUnit&) = delete;
     virtual ~T_VShiftUnit() = default;
@@ -30,23 +30,23 @@ public:
     //setters and getters:
 
     inline int get() {
-        int v_shift_unit_;
         //cout << "v_shift_u.get() " << endl;
-        pthread_mutex_lock(&mtx.lock_speed_car1);
-        pthread_mutex_lock(&mtx.lock_v_shift_unit);
+        int v_shift_unit_;
+        std::unique_lock sp(mtx.speed_car1, std::defer_lock);
+        std::unique_lock vs(mtx.v_shift_unit, std::defer_lock);
+        std::scoped_lock(sp, vs);
+
         v_shift_unit_ =  v_shift_unit;
-        pthread_mutex_unlock(&mtx.lock_v_shift_unit);
-        pthread_mutex_unlock(&mtx.lock_speed_car1);
         return v_shift_unit_;
     }
 
     inline void set(int v_shift_unit_) {
         //cout << "v_shift_u.set() " << endl;
-        pthread_mutex_lock(&mtx.lock_speed_car1);
-        pthread_mutex_lock(&mtx.lock_v_shift_unit);
+        std::unique_lock sp(mtx.speed_car1, std::defer_lock);
+        std::unique_lock vs(mtx.v_shift_unit, std::defer_lock);
+        std::scoped_lock(sp, vs);
+
         v_shift_unit = v_shift_unit_;
-        pthread_mutex_unlock(&mtx.lock_v_shift_unit);
-        pthread_mutex_unlock(&mtx.lock_speed_car1);
     }
 
 protected:

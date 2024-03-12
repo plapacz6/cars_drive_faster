@@ -30,7 +30,8 @@ void T_TimeController::sleep(long ns) {
 }
 
 void get_time(timespec *ptr_now, long ns) {
-    pthread_mutex_lock(&mtx.lock_get_time);
+    mtx.get_time.lock();
+    // pthread_mutex_lock(&mtx.lock_get_time);
     int ret = clock_gettime(CLOCK_MONOTONIC, ptr_now);
     if(ret) {
         cerr << "game_control(), clock_gettime()" << endl;
@@ -41,7 +42,8 @@ void get_time(timespec *ptr_now, long ns) {
         ptr_now->tv_nsec -= 1000000000L;
         ptr_now->tv_sec++;
     }
-    pthread_mutex_unlock(&mtx.lock_get_time);
+    mtx.get_time.unlock();
+    // pthread_mutex_unlock(&mtx.lock_get_time);
 }
 
 } //namespace csfgame
