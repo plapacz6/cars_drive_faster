@@ -11,9 +11,9 @@ T_GameDefs b_df;
 
 T_GameDefs::T_GameDefs()
     : wndName {"cars - higher speed"},
+    car1_step_speed_up {20},   //0.4,      //ARYTMINT    
     car_max_speed {350},       /*< max speed of each car*/
-    car_beginnig_speed {10},   /*< beginnig speed of each car*/    
-    car1_step_speed_up {20}   //0.4,      //ARYTMINT    
+    car_beginnig_speed {10}   /*< beginnig speed of each car*/        
 {
     roadside_width = 200;
     lane_width = 75;
