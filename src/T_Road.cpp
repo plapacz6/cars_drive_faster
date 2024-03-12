@@ -105,7 +105,7 @@ void T_Road::calculate_shift(double curr_speed) {
 
 void T_Road:: draw() {
     int v_shift_unit_get = v_shift_unit.get();
-    pthread_mutex_lock(&mtx.lock_speed_car1);
+    mtx.speed_car1.lock();    
     board.b = empty_road.clone();
 
     v_shift_total += v_shift_unit_get;
@@ -116,7 +116,7 @@ void T_Road:: draw() {
     paste_img_vert_wrap(*(line1.ptr_img), line1.coord, v_shift_total,  board.b);
     paste_img_vert_wrap(*(line2.ptr_img), line2.coord, v_shift_total,  board.b);
 
-    pthread_mutex_unlock(&mtx.lock_speed_car1);
+    mtx.speed_car1.unlock();    
     // PDEBUG_( game_images.img_car1.size() );
     // PDEBUG_( car1_L );
     // PDEBUG_( board.b.size() );
