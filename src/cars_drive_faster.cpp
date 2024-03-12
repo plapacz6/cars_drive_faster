@@ -167,7 +167,7 @@ void speed_up(bool *ptr_game_break) {
 
 
 int main() {
-    init_mutex();
+    
     srand(time(NULL));
 
     //cout << _POSIX_C_SOURCE << endl;
@@ -180,8 +180,7 @@ int main() {
 
     th_game_control.join();
     th_speed_up.join();
-
-    destroy_mutex();
+    
     return EXIT_SUCCESS;
 }
 

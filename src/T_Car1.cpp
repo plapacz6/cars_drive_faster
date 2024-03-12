@@ -28,21 +28,18 @@ void T_Car1::action() {
 
 //class speed_car1_t { //TODO //MTX_SC1
 void T_Car1::zeros_speed() {
-    pthread_mutex_lock(&mtx.lock_speed_car1);
+    lock_guard<mutex> lg(mtx.speed_car1);    
     speed_car1 = beginnig_speed;
-    pthread_mutex_unlock(&mtx.lock_speed_car1);
 }
 double T_Car1::get_speed() {
     double spped_car1_;
-    pthread_mutex_lock(&mtx.lock_speed_car1);
-    spped_car1_ = speed_car1;
-    pthread_mutex_unlock(&mtx.lock_speed_car1);
+    lock_guard<mutex> lg(mtx.speed_car1);            
+    spped_car1_ = speed_car1;    
     return spped_car1_;
 }
 void T_Car1::set_speed(double&& speed_car1_) {
-    pthread_mutex_lock(&mtx.lock_speed_car1);
-    speed_car1 = speed_car1_;
-    pthread_mutex_unlock(&mtx.lock_speed_car1);
+    lock_guard<mutex> lg(mtx.speed_car1);    
+    speed_car1 = speed_car1_;    
 }
 
 void T_Car1::to_left() {
